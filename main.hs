@@ -95,6 +95,7 @@ addThree x y z = x + y + z
 (***) a b = a**b -- If a function name is all symbols, it doesn't need quotes to be called infix
 
 -- Pattern matching
+-- pattern matching is syntatic sugar for case expressions
 lucky :: (Integral a) => a -> String  
 lucky 7 = "LUCKY NUMBER SEVEN!"  
 lucky x = "Sorry, you're out of luck, pal!" 
@@ -202,3 +203,55 @@ squares = [let square x = x * x in (square 5, square 3, square 2)]
 
 calcBmis' :: (RealFloat a) => [(a, a)] -> [a]  
 calcBmis' xs = [bmi | (w, h) <- xs, let bmi = w / h ^ 2, bmi >= 25.0]  
+
+-- case expressions
+describeList :: [a] -> String  
+describeList xs = "The list is " ++ case xs of [] -> "empty."  
+                                               [x] -> "a singleton list."   
+                                               xs -> "a longer list."  
+
+-- Recursion
+maximum' [] = error "Empty list"
+maximum' [x] = x
+-- maximum' (x:xs) = let tail_max = maximum' xs in (if x > tail_max then x else tail_max) 
+maximum' (x:xs) = let tail_max = maximum' xs in (if x > tail_max then x else tail_max) 
+
+replicate' :: (Num len, Ord len) => len -> val -> [val]
+replicate' len val 
+    | len < 0 = error "Cannot have negative length"
+    | len == 0 = []
+    | otherwise = val:(replicate' (len-1) val)
+
+quicksort :: (Ord a) => [a] -> [a]
+quicksort [] = []
+quicksort (x:xs) =
+    let smaller_sorted = quicksort[a | a <- xs, a <= x]
+        larged_sorted = quicksort[a | a <- xs, a > x]
+    in smaller_sorted ++ [x] ++ larged_sorted
+
+-- partial functions
+compareWithHundred :: (Num a, Ord a) => a -> Ordering  
+compareWithHundred = compare 100  
+
+divideByTen = (/10)
+
+isUpperAlphanum = (`elem` ['A'..'Z'])  
+
+-- Higher order functions
+applyTwice :: (a -> a) -> a -> a  
+applyTwice f x = f (f x) 
+twenty = applyTwice (*2) 5
+
+zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]  
+zipWith' _ [] _ = []
+zipWith' _ _ [] = []
+zipWith' f (x:xs) (y:ys) = f x y : zipWith' f xs ys 
+
+-- map, filter function
+list_5 = map (+3) [1,3,5,7]
+list_6 = filter even [1,2,3,4,5]
+
+-- find the largest number under 100,000 that's divisible by 3829
+answer = let divisable x = (x `mod` 3829) == 0 in 
+             head (filter divisable [100000,99999..])
+
