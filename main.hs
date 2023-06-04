@@ -254,4 +254,3 @@ list_6 = filter even [1,2,3,4,5]
 -- find the largest number under 100,000 that's divisible by 3829
 answer = let divisable x = (x `mod` 3829) == 0 in 
              head (filter divisable [100000,99999..])
-
